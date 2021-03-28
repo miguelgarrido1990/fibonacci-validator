@@ -1,5 +1,5 @@
 # fibonacci-validator
-The fibonacci validator is formed of 1 lambda function and 2 queues, each one acting as input and output.
+The fibonacci validator is formed of 1 lambda function and 2 queues, each one acting as input and output. The `fibonacci-validator.yaml` file is the cloudformation definition of this architecture.
 
 The sequences sent to the input queue will get picked up by the function, the function will filter out the invalid numbers and they will be sent to the output queue to continue through the pipeline.
 
