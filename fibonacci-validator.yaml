@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: 'SQS and Lambda example.'
+Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: './src'
+      FunctionName: 'fibonacci-validator'
+      Handler: 'index.handler'
+      Description: "Fibonacci Validator"
+      MemorySize: 128
+      Runtime: "nodejs10"
+      Timeout: 30
+      Environment:
+        Variables:
+          OUTPUT_QUEUE: !GetAtt 'OutputQueue.Name'
+
+  InputQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: 'fibonacci-validator-input'
+      VisibilityTimeout: 120
+
+  OutputQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: 'fibonacci-validator-output'
+      VisibilityTimeout: 120
+  
+  SqsTriggerMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 1
+      EventSourceArn: !GetAtt 'InputQueue.Arn'
+      FunctionName: !GetAtt 'LambdaFunction.Arn'
